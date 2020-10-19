@@ -1,3 +1,5 @@
+import math
+
 def LoadFromFile(filepath):
     f = open(filepath, "r") # opening the file to read
     lines = f.readlines() # f is now equal to all of the lines in the file
@@ -18,11 +20,23 @@ def LoadFromFile(filepath):
                 list_representation.append(0) # We can make this value 0, and then sort it like any other number
             else:
                 list_representation.append(int(x))
-    return(list_representation, n)
+    return(list_representation)
 
+
+def DebugPrintState(state):
+    n = int(math.sqrt(len(state)))
+    return n
+
+def ComputeNeighbors(state):
+    
 
 def isValid(i, n):
     return True
 
 
-print(LoadFromFile('input.txt'))
+def main():
+    result = LoadFromFile("input.txt")
+    print(DebugPrintState(result))
+
+if __name__ == "__main__":
+    main()
