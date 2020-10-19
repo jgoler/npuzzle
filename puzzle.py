@@ -25,10 +25,16 @@ def LoadFromFile(filepath):
 
 def DebugPrintState(state):
     n = int(math.sqrt(len(state)))
-    return n
+    i = 0
+    while i < len(state):
+        print("{}, {}, {}".format(state[i], state[i + 1], state[i + 2]))
+         #"Hi {}, you are {}".format(name, age)
+        i += n
+
+
 
 def ComputeNeighbors(state):
-    
+    return True
 
 def isValid(i, n):
     return True
@@ -36,7 +42,7 @@ def isValid(i, n):
 
 def main():
     result = LoadFromFile("input.txt")
-    print(DebugPrintState(result))
+    DebugPrintState(result)
 
 if __name__ == "__main__":
     main()
