@@ -16,8 +16,13 @@ def LoadFromFile(filepath):
             print("Your input data is invalid")
             return None
         for x in j:
+            '''
             if x == "*":
                 list_representation.append(0) # We can make this value 0, and then sort it like any other number
+            else:
+            '''
+            if x == "*":
+                list_representation.append("*")
             else:
                 list_representation.append(int(x))
     return(list_representation)
@@ -28,13 +33,68 @@ def DebugPrintState(state):
     i = 0
     while i < len(state):
         print("{}, {}, {}".format(state[i], state[i + 1], state[i + 2]))
-         #"Hi {}, you are {}".format(name, age)
         i += n
 
 
 
 def ComputeNeighbors(state):
+    neighborsList = []
+    index = state.index("*")
+    n = int(math.sqrt(len(state)))
+    if index % n == 0:
+        swapping_number = state[index + 1]
+        current = state.copy()
+        Swap(index + 1, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+    if index % n == n - 1:
+        swapping_number = state[index - 1]
+        current = state.copy()
+        Swap(index - 1, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+    if index % n != 0 and index % n != n - 1: #by still checking this case, we don't have to worry about n = 2
+        swapping_number = state[index + 1]
+        current = state.copy()
+        Swap(index + 1, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+        swapping_number = state[index - 1]
+        current = state.copy()
+        Swap(index - 1, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+    if index + 3 < len(state):
+        swapping_number = state[index + 3]
+        current = state.copy()
+        Swap(index + 3, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+    if index - 3 >= 0:
+        swapping_number = state[index - 3]
+        current = state.copy()
+        Swap(index - 3, index, current)
+        current_moves = (swapping_number, current)
+        neighborsList.append(current_moves)
+    return neighborsList
+
+def IsGoal(state):
+    iteration = 1
+    while iteration <= len(state):
+        if iteration == len(state):
+            if state[iteration - 1] == 0:
+                return True
+        if state[iteration - 1] != iteration:
+            return False
+        iteration += 1
     return True
+
+
+def Swap(first_index, second_index, list):
+    list[second_index] = list[first_index]
+    list[first_index] = 0
+    return list
+    
 
 def isValid(i, n):
     return True
@@ -43,6 +103,7 @@ def isValid(i, n):
 def main():
     result = LoadFromFile("input.txt")
     DebugPrintState(result)
+    print(ComputeNeighbors(result))
 
 if __name__ == "__main__":
     main()
