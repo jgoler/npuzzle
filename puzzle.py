@@ -101,7 +101,6 @@ def Swap(first_index, second_index, list):
     return list
 
 '''
-
 def BFS(state):
     frontier = [state]
     discovered = set(tuple(state))
@@ -118,13 +117,11 @@ def BFS(state):
             backtrack = []
             backtrack.append(current_state)
             value = parents[state]
-
             while value != None:
                 backtrack.append(value)
                 value = parents[value]
             backtrack.reverse()
             return backtrack
-
 '''
 
 
@@ -164,7 +161,8 @@ def ConvertStates(neighbors):
 
 def BFS(state):
     frontier = [state]
-    discovered = set(tuple(map(tuple, Transform(state))))
+    #discovered = set(tuple(map(tuple, Transform(state))))
+    discovered = {tuple(state)}
     parents = {tuple(state): ()}
     while len(frontier) != 0:
         current_state = frontier.pop(0)
