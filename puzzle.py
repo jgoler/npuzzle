@@ -179,6 +179,27 @@ def BFS(state):
                 parents[tuple(Flatten(neighbor_state))] = tuple(path)
 
 
+def DFS(state):
+    frontier = [state]
+    #discovered = set(tuple(map(tuple, Transform(state))))
+    discovered = {tuple(state)}
+    parents = {tuple(state): ()}
+    while len(frontier) != 0:
+        current_state = frontier.pop(0)
+        if IsGoal(current_state):
+            print("current_state is equal to ", tuple(current_state))
+            return parents[tuple(current_state)][::-1]
+        neighboring_states = ConvertStates(ComputeNeighbors(current_state))
+        for neighbor in range(len(neighboring_states)):
+            neighbor_state = neighboring_states[neighbor]
+            if tuple(Flatten(neighbor_state)) not in discovered:
+                frontier.insert(0, Flatten(neighbor_state))
+                discovered.add(tuple(Flatten(neighbor_state)))
+                path = list((parents[tuple(current_state)]))
+                path.insert(0, ComputeNeighbors(current_state)[neighbor][0])
+                parents[tuple(Flatten(neighbor_state))] = tuple(path)
+
+
 '''
 You want to add to the path the first element in the correct pair that ComputeNeighbors returned 
 The correct pair is the pair that contains neighbor_state as the second element 
@@ -206,7 +227,7 @@ def main():
     result = LoadFromFile("input.txt")
     #DebugPrintState(result)
     #print(ComputeNeighbors(result))
-    print(BFS(result))
+    print(DFS(result))
     #print(IsGoal([1, 2, 3, 4, 5, 6, 7, 8, "*"]))
 
 if __name__ == "__main__":
