@@ -79,6 +79,7 @@ def ComputeNeighbors(state):
     return neighborsList
 
 def IsGoal(state):
+    '''
     iteration = 1
     while iteration <= len(state):
         if iteration == len(state):
@@ -88,22 +89,127 @@ def IsGoal(state):
             return False
         iteration += 1
     return True
+    '''
+    new_list = [i for i in range(1, len(state) + 1)]
+    new_list[-1] = "*"
+    return state == new_list
 
 
 def Swap(first_index, second_index, list):
     list[second_index] = list[first_index]
-    list[first_index] = 0
+    list[first_index] = '*'
     return list
-    
+
+'''
+
+def BFS(state):
+    frontier = [state]
+    discovered = set(tuple(state))
+    parents = {tuple(state): None}
+    while len(frontier) > 0:
+        #print("while loop iteration")
+        current_state = frontier.pop(0)
+        discovered.add(tuple(current_state))
+        print("current_state is ", current_state)
+        #print(IsGoal(current_state))
+        if IsGoal(current_state):
+            #print("in if statement")
+            test = current_state
+            backtrack = []
+            backtrack.append(current_state)
+            value = parents[state]
+
+            while value != None:
+                backtrack.append(value)
+                value = parents[value]
+            backtrack.reverse()
+            return backtrack
+
+'''
+
+
+
+
+
+
+
+
+
+def Transform(state):
+    return [state]
+
+def Flatten(state):
+    new_list = []
+    for i in state:
+        for j in i:
+            new_list.append(j)
+    return new_list
+
+
+def ConvertStates(neighbors):
+    n = int(math.sqrt(len(neighbors[0][1])))
+    states = []
+    for i in neighbors:
+        list = i[1]
+        state = [[0 for i in range(n)] for j in range(n)]
+        line = 0
+        for x in range(len(list)):
+            if x%n == 0 and x != 0:
+                line += 1 
+            state[line][x%n] = list[x]
+        states.append(state)    
+    return states
+
+
+
+def BFS(state):
+    frontier = [state]
+    discovered = set(tuple(map(tuple, Transform(state))))
+    parents = {tuple(state): ()}
+    while len(frontier) != 0:
+        current_state = frontier.pop(0)
+        if IsGoal(current_state):
+            return parents[tuple(current_state)]
+        neighboring_states = ConvertStates(ComputeNeighbors(current_state))
+        for neighbor in range(len(neighboring_states)):
+            neighbor_state = neighboring_states[neighbor]
+            if tuple(Flatten(neighbor_state)) not in discovered:
+                frontier.append(Flatten(neighbor_state))
+                discovered.add(tuple(Flatten(neighbor_state)))
+                path = list((parents[tuple(current_state)]))
+                path.append(ComputeNeighbors(current_state)[neighbor][0])
+                parents[tuple(Flatten(neighbor_state))] = tuple(path)
+
+
+'''
+You want to add to the path the first element in the correct pair that ComputeNeighbors returned 
+The correct pair is the pair that contains neighbor_state as the second element 
+computeNeighbors(current_state) at neighbor and at the first element so you get the tile
+'''
+
+'''
+use .insert for frontier and for path
+'''
+'''
+and also return backwards path 
+'''
+'''
+[::-1]
+'''
+
+
 
 def isValid(i, n):
     return True
 
 
 def main():
+    #print(Transform([1, 2, 3, 4, 5, 6, 7, 8, 9]))
     result = LoadFromFile("input.txt")
-    DebugPrintState(result)
-    print(ComputeNeighbors(result))
+    #DebugPrintState(result)
+    #print(ComputeNeighbors(result))
+    print(BFS(result))
+    #print(IsGoal([1, 2, 3, 4, 5, 6, 7, 8, "*"]))
 
 if __name__ == "__main__":
     main()
