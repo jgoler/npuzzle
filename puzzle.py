@@ -28,6 +28,19 @@ def LoadFromFile(filepath):
     return(list_representation)
 
 
+
+def isValid(j, n):
+    flag = True
+    if len(j) != n:
+        return False
+    for letter in j:
+        if letter.isdigit() or letter == '*':
+            flag = True
+        else:
+            return False
+    return flag
+
+
 def DebugPrintState(state):
     n = int(math.sqrt(len(state)))
     i = 0
@@ -161,7 +174,6 @@ def ConvertStates(neighbors):
 
 def BFS(state):
     frontier = [state]
-    #discovered = set(tuple(map(tuple, Transform(state))))
     discovered = {tuple(state)}
     parents = {tuple(state): ()}
     while len(frontier) != 0:
@@ -181,7 +193,6 @@ def BFS(state):
 
 def DFS(state):
     frontier = [state]
-    #discovered = set(tuple(map(tuple, Transform(state))))
     discovered = {tuple(state)}
     parents = {tuple(state): ()}
     while len(frontier) != 0:
@@ -200,34 +211,72 @@ def DFS(state):
                 parents[tuple(Flatten(neighbor_state))] = tuple(path)
 
 
-'''
-You want to add to the path the first element in the correct pair that ComputeNeighbors returned 
-The correct pair is the pair that contains neighbor_state as the second element 
-computeNeighbors(current_state) at neighbor and at the first element so you get the tile
-'''
 
-'''
-use .insert for frontier and for path
-'''
-'''
-and also return backwards path 
-'''
-'''
-[::-1]
-'''
+def MakeGoal(state):
+    goal_list = [i for i in range(1, len(state) + 1)]
+    goal_list[-1] = "*"
+    return goal_list
 
 
+def BidirectionalSearch(state):
+    frontier = [state]
+    second_frontier = [MakeGoal(state)]
+    discovered = {tuple(state)}
+    second_discovered = {tuple(second_frontier[0])}
+    parents = {tuple(state): ()}
+    second_parents = {tuple(second_frontier[0]): ()}
+    while len(frontier) != 0 and len(second_frontier) != 0:
+        current_state = frontier.pop(0)
+        second_current_state = second_frontier.pop(0)
+        if discovered & second_discovered:
+            '''
+            final_value = []
+            final_value.append(parents[tuple(current_state)])
+            final_value.append(second_parents[tuple(second_current_state)][::-1])
+            return final_value
+            '''
+            shared_tuple = discovered & second_discovered
+            tuple_one = tuple(parents[tuple(Flatten(tuple(shared_tuple)))])
+            tuple_two = tuple(second_parents[tuple(Flatten(tuple(shared_tuple)))][::-1])
 
-def isValid(i, n):
-    return True
+            return tuple_one + tuple_two
+        '''
+            final_value = []
+
+            new_value = []
+            new_value.append(parents[tuple(current_state)])
+            new_value.append(second_parents[tuple(second_current_state)][::-1])
+            final_value.append(new_value)
+            return final_value
+            '''
+        neighboring_states = ConvertStates(ComputeNeighbors(current_state))
+        for neighbor in range(len(neighboring_states)):
+            neighbor_state = neighboring_states[neighbor]
+            if tuple(Flatten(neighbor_state)) not in discovered:
+                frontier.append(Flatten(neighbor_state))
+                discovered.add(tuple(Flatten(neighbor_state)))
+                path = list((parents[tuple(current_state)]))
+                path.append(ComputeNeighbors(current_state)[neighbor][0])
+                parents[tuple(Flatten(neighbor_state))] = tuple(path)
+        second_neighboring_states = ConvertStates(ComputeNeighbors(second_current_state))
+        for neighbor in range(len(second_neighboring_states)):
+            second_neighbor_state = second_neighboring_states[neighbor]
+            if tuple(Flatten(second_neighbor_state)) not in second_discovered:
+                second_frontier.append(Flatten(second_neighbor_state))
+                second_discovered.add(tuple(Flatten(second_neighbor_state)))
+                path = list((second_parents[tuple(second_current_state)]))
+                path.append(ComputeNeighbors(second_current_state)[neighbor][0])
+                second_parents[tuple(Flatten(second_neighbor_state))] = tuple(path)
+    
 
 
 def main():
     #print(Transform([1, 2, 3, 4, 5, 6, 7, 8, 9]))
     result = LoadFromFile("input.txt")
+    #print(LoadFromFile("input.txt"))
     #DebugPrintState(result)
     #print(ComputeNeighbors(result))
-    print(DFS(result))
+    print(BFS(result))
     #print(IsGoal([1, 2, 3, 4, 5, 6, 7, 8, "*"]))
 
 if __name__ == "__main__":
